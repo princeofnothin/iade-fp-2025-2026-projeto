@@ -1,2 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+using Monopólio.App;
+
+try
+{
+    var app = Bootstrap.CreateApplication();
+    app.Run();
+}
+catch (Exception ex)
+{
+    System.Console.WriteLine($"Erro fatal: {ex.Message}");
+}

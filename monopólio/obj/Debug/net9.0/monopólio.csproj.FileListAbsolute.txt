@@ -1,0 +1,15 @@
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.GeneratedMSBuildEditorConfig.editorconfig
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.AssemblyInfoInputs.cache
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.AssemblyInfo.cs
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.csproj.CoreCompileInputs.cache
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.sourcelink.json
+/Users/princeofnothing/Downloads/monopólio/monopólio/bin/Debug/net9.0/monopólio
+/Users/princeofnothing/Downloads/monopólio/monopólio/bin/Debug/net9.0/monopólio.deps.json
+/Users/princeofnothing/Downloads/monopólio/monopólio/bin/Debug/net9.0/monopólio.runtimeconfig.json
+/Users/princeofnothing/Downloads/monopólio/monopólio/bin/Debug/net9.0/monopólio.dll
+/Users/princeofnothing/Downloads/monopólio/monopólio/bin/Debug/net9.0/monopólio.pdb
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.dll
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/refint/monopólio.dll
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.pdb
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/monopólio.genruntimeconfig.cache
+/Users/princeofnothing/Downloads/monopólio/monopólio/obj/Debug/net9.0/ref/monopólio.dll

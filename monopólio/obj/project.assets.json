@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/princeofnothing/Downloads/monopólio/monopólio/monopólio.csproj",
+      "projectUniqueName": "/Users/princeofnothing/Downloads/monopólio/monopólio/monopólio.csproj",
       "projectName": "monopólio",
-      "projectPath": "/Users/princeofnothing/Downloads/monopólio/monopólio/monopólio.csproj",
+      "projectPath": "/Users/princeofnothing/Downloads/monopólio/monopólio/monopólio.csproj",
       "packagesPath": "/Users/princeofnothing/.nuget/packages/",
-      "outputPath": "/Users/princeofnothing/Downloads/monopólio/monopólio/obj/",
+      "outputPath": "/Users/princeofnothing/Downloads/monopólio/monopólio/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/princeofnothing/.nuget/NuGet/NuGet.Config"
