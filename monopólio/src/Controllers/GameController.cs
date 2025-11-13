@@ -159,17 +159,11 @@ public class GameController
         gameState.Dice.Roll();
         int movement = gameState.Dice.Total;
 
-        // Processar movimento
-        if (movement < 0)
-        {
-            player.Position = (player.Position + movement) % 49;
-            if (player.Position < 0)
-                player.Position += 49;
-        }
-        else
-        {
-            player.Position = (player.Position + movement) % 49;
-        }
+        // Processar movimento (circular 0..48)
+        int newPos = player.Position + movement;
+        newPos %= 49;
+        if (newPos < 0) newPos += 49;
+        player.Position = newPos;
 
         // Obter o espaço onde pousou
         var space = gameState.Board.GetSpaceByLinearIndex(player.Position);
@@ -177,6 +171,35 @@ public class GameController
 
         // Exibir resultado
         System.Console.WriteLine($"Saiu {gameState.Dice} – espaço {spaceName}.");
+
+        // Se saiu duplo, tratar duplos
+        if (gameState.Dice.IsDouble)
+        {
+            // Se for o segundo duplo consecutivo do mesmo jogador -> enviar para prisão
+            if (gameState.Dice.DoubleCount >= 2)
+            {
+                System.Console.WriteLine("Dois duplos consecutivos — jogador enviado para a prisão.");
+                var prison = gameState.Board.GetAllSpaces().FirstOrDefault(s => s.Type == SpaceType.Prison);
+                if (prison != null)
+                {
+                    player.Position = gameState.Board.CoordinatesToLinearIndex(prison.Row, prison.Column);
+                }
+                player.IsInPrison = true;
+                player.TurnsInPrison = 0;
+                _gameRepository.SaveGame(gameState);
+                return true;
+            }
+            else
+            {
+                System.Console.WriteLine("Saiu duplo — pode jogar de novo.");
+                // Processar efeitos do espaço normalmente e permitir novo lançamento (não termina o turno)
+            }
+        }
+        else
+        {
+            // Reset contador de duplos quando não sai duplo
+            gameState.Dice.ResetDoubleCount();
+        }
 
         // Processar efeitos do espaço
         if (space != null)

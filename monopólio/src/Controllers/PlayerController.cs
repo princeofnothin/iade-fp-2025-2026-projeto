@@ -1,5 +1,6 @@
 using Monopólio.Models;
 using Monopólio.Repositories;
+using Monopólio.Services;
 
 namespace Monopólio.Controllers;
 
@@ -7,11 +8,17 @@ public class PlayerController
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly IGameRepository _gameRepository;
+    private readonly CardService _cardService;
+    private readonly PurchaseService _purchaseService;
+    private readonly RentService _rentService;
 
-    public PlayerController(IPlayerRepository playerRepository, IGameRepository gameRepository)
+    public PlayerController(IPlayerRepository playerRepository, IGameRepository gameRepository, CardService cardService, PurchaseService purchaseService, RentService rentService)
     {
         _playerRepository = playerRepository;
         _gameRepository = gameRepository;
+        _cardService = cardService;
+        _purchaseService = purchaseService;
+        _rentService = rentService;
     }
 
     public void RegisterPlayer(string playerName)
@@ -57,7 +64,6 @@ public class PlayerController
             System.Console.WriteLine("Nenhum jogo em progresso.");
             return;
         }
-
         var player = gameState.Players.FirstOrDefault(p => p.Name == playerName);
         if (player == null)
         {
@@ -72,30 +78,10 @@ public class PlayerController
             return;
         }
 
-        if (space.Type != SpaceType.Property)
-        {
-            System.Console.WriteLine("Este espaço não está para venda.");
-            return;
-        }
-
-        if (space.Owner != null)
-        {
-            System.Console.WriteLine("O espaço já se encontra comprado.");
-            return;
-        }
-
-        if (!player.CanAfford(space.Price))
-        {
-            System.Console.WriteLine("O jogador não tem dinheiro suficiente para adquirir o espaço.");
-            return;
-        }
-
-        player.DeductMoney(space.Price);
-        space.Purchase(player);
-        player.OwnedProperties.Add(space);
-
-        System.Console.WriteLine("Espaço comprado.");
-        _gameRepository.SaveGame(gameState);
+        var (success, message) = _purchaseService.TryBuySpace(player, space, gameState);
+        System.Console.WriteLine(message);
+        if (success)
+            _gameRepository.SaveGame(gameState);
     }
 
     public void PayRent(string playerName)
@@ -121,31 +107,10 @@ public class PlayerController
             return;
         }
 
-        if (space.Type != SpaceType.Property || space.Owner == null)
-        {
-            System.Console.WriteLine("Não é necessário pagar aluguer.");
-            return;
-        }
-
-        if (space.Owner.Name == playerName)
-        {
-            System.Console.WriteLine("Não é necessário pagar aluguer.");
-            return;
-        }
-
-        decimal rent = space.CalculateRent();
-
-        if (!player.CanAfford(rent))
-        {
-            System.Console.WriteLine("O jogador não tem dinheiro suficiente.");
-            return;
-        }
-
-        player.DeductMoney(rent);
-        space.Owner.AddMoney(rent);
-
-        System.Console.WriteLine("Aluguer pago.");
-        _gameRepository.SaveGame(gameState);
+        var (success, message) = _rentService.TryPayRent(player, space);
+        System.Console.WriteLine(message);
+        if (success)
+            _gameRepository.SaveGame(gameState);
     }
 
     public void BuildHouse(string playerName, string spaceName)
@@ -171,52 +136,10 @@ public class PlayerController
             return;
         }
 
-        if (space.Type != SpaceType.Property)
-        {
-            System.Console.WriteLine("Não é possível comprar casa no espaço indicado.");
-            return;
-        }
-
-        if (space.Owner?.Name != playerName)
-        {
-            System.Console.WriteLine("O jogador não possui este espaço.");
-            return;
-        }
-
-        if (space.NumberOfHouses >= 4)
-        {
-            System.Console.WriteLine("Não é possível comprar casa no espaço indicado.");
-            return;
-        }
-
-        if (space.Color.HasValue)
-        {
-            var colorProperties = gameState.Board.GetAllSpaces()
-                .Where(s => s.Type == SpaceType.Property && s.Color == space.Color)
-                .ToList();
-
-            var playerOwnedOfColor = colorProperties.Where(s => s.Owner?.Name == playerName).Count();
-
-            if (playerOwnedOfColor != colorProperties.Count)
-            {
-                System.Console.WriteLine("O jogador não possui todos os espaços da cor.");
-                return;
-            }
-        }
-
-        decimal houseCost = space.Price * 0.6m;
-
-        if (!player.CanAfford(houseCost))
-        {
-            System.Console.WriteLine("O jogador não possui dinheiro suficiente.");
-            return;
-        }
-
-        player.DeductMoney(houseCost);
-        space.AddHouse(houseCost);
-
-        System.Console.WriteLine("Casa adquirida.");
-        _gameRepository.SaveGame(gameState);
+        var (success, message) = _purchaseService.TryBuildHouse(player, space, gameState);
+        System.Console.WriteLine(message);
+        if (success)
+            _gameRepository.SaveGame(gameState);
     }
 
     public void DrawCard(string playerName)
@@ -256,6 +179,17 @@ public class PlayerController
 
         space.CardDrawn = true;
         System.Console.WriteLine("Tirou uma carta.");
+
+        // Desenhar e aplicar carta
+        var type = space.Type == SpaceType.Chance ? "Chance" : "Community";
+        var card = _cardService.DrawCard(type);
+        if (card != null)
+        {
+            card.ApplyEffect(player, gameState);
+            // Mostrar texto da carta
+            System.Console.WriteLine(card.FullText);
+        }
+
         _gameRepository.SaveGame(gameState);
     }
 }
