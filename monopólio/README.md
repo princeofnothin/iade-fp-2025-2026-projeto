@@ -1,4 +1,4 @@
-#+  Monopólio — Projeto Académico
+# Monopólio — Projeto Académico
 
 **Unidade Curricular:** Fundamentos da Progrmação
 # Projeto: Jogo Monopólio
